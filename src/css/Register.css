@@ -31,7 +31,7 @@ img {
   font-weight: bold;
   font-size: 2.5em;
 }
-p{
+.pp{
   color: #5d5b8d;
   font-family: 'Handjet', cursive;
   font-weight: bold;
@@ -77,7 +77,7 @@ form{
 }
 
 /* Transition */
-img{ filter: grayscale(100%); 
+.image img{ filter: grayscale(100%); 
   transition: filter .3s ease-in-out;
 }
-img:hover { filter: none;}
+.image :hover { filter: none;}

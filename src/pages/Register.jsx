@@ -1,10 +1,25 @@
 import React from 'react'
-import TextField from '@mui/material/TextField';
-import { Button } from '@mui/material';
 import "../css/Register.css"
 import Lama from "../Images/FunkyLamaMascot.png"
+import { auth } from '../firebase.jsx'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 const Register = () => {
+
+  const handleSubmit = async (e) =>{
+
+    e.preventDefault()
+    const displayName = e.target[0].value;
+    const email = e.target[1].value;
+    const password = e.target[2].value;
+    const file = e.target[3].files[0];
+    try{
+    const res = await createUserWithEmailAndPassword(auth, email, password)
+    }catch(err){
+      setErr(true);
+    }
+  }
+
   return (
     <div className='formContainer'>
       <div className='formWrapper'>
@@ -14,17 +29,18 @@ const Register = () => {
         <div className='content'>
         <span className='logo'>Lama Chat</span>
         <span className='title'>Register</span>
-          <form>
-            <TextField variant='standard' label="Username" type='String'/>
-            <TextField variant='standard' label="Email" type="email"/>
-            <TextField variant='standard' label="Password" type='password' />
+          <form onSubmit={handleSubmit}>
+            <input type="text" placeholder='Username' />
+            <input type="email" placeholder='Email' />
+            <input type="password" placeholder='Password' />
             <input style={{display:"none"}} id="file" type='file'/>
             <label htmlFor='file'>
-              <p>Image+</p>
+              <p className='pp'>Image+</p>
             </label>
-            <Button variant='contained' style={{backgroundColor: "#5d5b8d"}}>Sign Up</Button>
+            <button>press</button>
+            {err && <span>Something Went Wrong</span>}
           </form>
-          <p>You do have account? Login</p>
+          <p className='pp'>You do have account? Login</p>
         </div>
       </div>
     </div>
