@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "../css/Register.css";
 import Lama from "../Images/FunkyLamaMascot.png";
-import { auth, storage } from "../firebase";
+import { auth, storage, db } from "../firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
 
 const Register = () => {
   const [err, setErr] = useState(false);
@@ -14,24 +15,28 @@ const Register = () => {
     const password = e.target[2].value;
     const file = e.target[3].files[0];
     try {
-      const user = await createUserWithEmailAndPassword(auth, email, password);
+      const { user } = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       console.log(user);
       const storageRef = ref(storage, displayName);
       const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        (error) => {
-          setErr(true);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await updateProfile(user.user, {
-              displayName,
-              photoURL: downloadURL,
-            });
-          });
-        }
-      );
+      const uploadSnapshot = await uploadTask; // waits for upload completion
+      const downloadURL = await getDownloadURL(uploadSnapshot.ref);
+      await updateProfile(user, {
+        displayName,
+        photoURL: downloadURL,
+      });
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        displayName,
+        email,
+        photoURL: downloadURL,
+      });
     } catch (err) {
+      console.log(err);
       setErr(true);
     }
   };
