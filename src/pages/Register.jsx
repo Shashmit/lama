@@ -3,7 +3,7 @@ import "../css/Register.css";
 import Lama from "../Images/FunkyLamaMascot.png";
 import { auth, storage } from "../firebase";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { uploadBytesResumable, getDownloadURL, ref } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const Register = () => {
   const [err, setErr] = useState(false);
@@ -16,21 +16,21 @@ const Register = () => {
     try {
       const user = await createUserWithEmailAndPassword(auth, email, password);
       console.log(user);
-      // const storageRef = ref(storage, displayName);
-      // const uploadTask = uploadBytesResumable(storageRef, file);
-      // uploadTask.on(
-      //   (error) => {
-      //     setErr(true);
-      //   },
-      //   () => {
-      //     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-      //       await updateProfile(user.user, {
-      //         displayName,
-      //         photoURL: downloadURL,
-      //       });
-      //     });
-      //   }
-      // );
+      const storageRef = ref(storage, displayName);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      uploadTask.on(
+        (error) => {
+          setErr(true);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            await updateProfile(user.user, {
+              displayName,
+              photoURL: downloadURL,
+            });
+          });
+        }
+      );
     } catch (err) {
       setErr(true);
     }
