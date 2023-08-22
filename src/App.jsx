@@ -1,10 +1,9 @@
- import Home from './pages/Home'
-import Register from './pages/Register'
- import Login from './pages/login'
+import Home from "./pages/Home";
+import Register from "./pages/Register";
+import Login from "./pages/login";
+
 function App() {
-  return (
-   <Register/>
-  )
+  return <Register />;
 }
 
-export default App
+export default App;
